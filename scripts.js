@@ -1,4 +1,4 @@
-let inicioMostraSonic = () => {
+/*let inicioMostraSonic = () => {
     let inicioSonic = document.querySelector(".inicio-sonic");
     let inicioGamb = document.querySelector(".inicio-gamb");
     let telaInicio = document.querySelector(".tela-inicio");
@@ -15,7 +15,7 @@ let inicioMostraSonic = () => {
         telaJogo.style.display="block"
     }
     setTimeout(destroyElementsInicio, 3400);
-}
+}*/
 
 
 //Movimentação do personagem
@@ -34,6 +34,7 @@ let viradoDireita = true;
 let viradoEsquerda = false;
 let ok;
 let okay;
+let correndo = false;
 
 
 
@@ -51,12 +52,20 @@ window.addEventListener('keydown', function(e) {
             sonic.classList.remove('sonic-pulo');
             i--;
             io--;
-            dx = 0;
-            if (viradoEsquerda == true && viradoDireita == false) {
+            if (viradoEsquerda == true && viradoDireita == false && correndo == false) {
                 sonic.src="images/sonic-parado-inicio-esquerda.gif";
             };
-            if (viradoDireita == true && viradoEsquerda == false) {
+
+            if (viradoEsquerda == true && viradoDireita == false && correndo == true) {
+                sonic.src="images/sonic-corre-esquerda.gif";
+            };
+
+            if (viradoDireita == true && viradoEsquerda == false && correndo == false) {
                 sonic.src="images/sonic-parado-inicio-direita.gif";
+            };
+
+            if (viradoDireita == true && viradoEsquerda == false && correndo == true) {
+                sonic.src="images/sonic-corre-direita.gif";
             };
           }
 
@@ -75,12 +84,20 @@ window.addEventListener('keydown', function(e) {
             sonic.classList.remove('sonic-ataque');
             i--;
             io--;
-            dx = 0;
             if (viradoEsquerda == true && viradoDireita == false) {
                 sonic.src="images/sonic-parado-inicio-esquerda.gif";
             };
+
+            if (viradoEsquerda == true && viradoDireita == false && correndo == true) {
+                sonic.src="images/sonic-corre-esquerda.gif";
+            };
+            
             if (viradoDireita == true && viradoEsquerda == false) {
                 sonic.src="images/sonic-parado-inicio-direita.gif";
+            };
+
+            if (viradoDireita == true && viradoEsquerda == false && correndo == true) {
+                sonic.src="images/sonic-corre-direita.gif";
             };
           }
 
@@ -102,6 +119,7 @@ vel = 4;
         if (e.key === "d" && i == 0) {
             viradoDireita = true;
             viradoEsquerda = false;
+            correndo = true;
 
             sonic.src="images/sonic-corre-direita.gif";
             frame++;
@@ -127,6 +145,7 @@ vel = 4;
         if (e.key === "a" & i ==0) {
             viradoDireita = false;
             viradoEsquerda = true;
+            correndo = true;
             vel = 4;
             sonic.src="images/sonic-corre-esquerda.gif";
             frame++;
@@ -155,6 +174,7 @@ vel = 4;
 
         if (e.key === "d") {
             dx = 0;
+            correndo = false;
             
             sonic.src="images/sonic-parado-inicio-direita.gif"
             frame = 3;
@@ -166,6 +186,7 @@ vel = 4;
 
         if (e.key === "a") {
             dx = 0;
+            correndo = false;
             sonic.src="images/sonic-parado-inicio-esquerda.gif"
             frame = 3;
 
@@ -178,15 +199,18 @@ vel = 4;
 
 }
 
+let cloneRing;
+let rValue;
 
 
 function enterFrame() {
     let sonic = document.querySelector(".sonic");
     let background = document.querySelector(".div-img")
+    let ring = document.querySelector(".ring-colet");
     let esquerdaSonic = parseInt(window.getComputedStyle(sonic).getPropertyValue('left'));
     let esquerdaBackground = parseInt(window.getComputedStyle(background).getPropertyValue('background-position'));
+    let esquerdaRing = parseInt(window.getComputedStyle(ring).getPropertyValue('left'));
 
-        
         ok = px += dx * vel;
 
         okay = sonic.style.left=ok+"px";
@@ -197,14 +221,24 @@ function enterFrame() {
 
 
 //Colisão com o fundo
-    if (esquerdaSonic >= 320 && esquerdaBackground <= 0) {  
-        
+    if (esquerdaSonic >= 320 && esquerdaBackground <= 0) { 
         background.style.backgroundPosition=-0.75*(ok-320)+"px";
+
+        //ring
+        ring.style.left=750 -0.75*(ok-320)+"px";
+        if (esquerdaRing <= 685) {
+            ring.style.display="block";
+        }
+        if(esquerdaRing >=686){
+            ring.style.display="none";
+        }
+        if(esquerdaRing <=-5){
+            ring.style.display="none";
+        }
 
         ok = 0;
 
         sonic.style.left="320px";
-
     }
 
     if (esquerdaSonic == 320 && esquerdaBackground >= 0.1) {
@@ -217,3 +251,22 @@ function enterFrame() {
 window.addEventListener("load", inicia());
 
 
+//rings
+
+let ring = document.querySelector(".ring-colet");
+
+/*function geraRing() {
+    let ring = document.querySelector(".ring-colet");
+    let background = document.querySelector(".div-img");
+
+    //let randomRing = [250, 350, 480];
+    //let rand = Math.floor(Math.random()*randomRing.length);
+    //rValue = randomRing[rand];
+
+    cloneRing = ring.cloneNode(true);
+    cloneRing.style.cssText="position: absolute; top: 165px; left: 750px; width: 22px; height: 22px; display: block;"
+
+    background.appendChild(cloneRing);
+}
+
+setInterval(geraRing, 2000);*/
